@@ -9,11 +9,19 @@
 </head>
 <body>
   <py-env>
+    - lxml
     - matplotlib
     - numpy
+    - xmltodict
     - paths:
         - src/waves.py
   </py-env>
+  <py-repl auto-generate="true">
+import matplotlib.pyplot as plt
+import numpy as np
+import xmltodict
+from lxml import etree
+  </py-repl>
   <py-script>
 import matplotlib.pyplot as plt
 import numpy as np
