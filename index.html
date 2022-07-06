@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sine Wave</title>
+  <title>WebMZ</title>
   <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
   <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
@@ -12,25 +12,21 @@
     - lxml
     - matplotlib
     - numpy
-    - xmltodict
     - paths:
         - data/small_zlib.pwiz.1.1.mzML
-        - src/waves.py
+        - src/io.py
   </py-env>
-  <py-repl auto-generate="true">
-import matplotlib.pyplot as plt
-import numpy as np
-import xmltodict
-from lxml import etree
-  </py-repl>
+  Hello world! <br>
+  This is the current date and time, as computed by Python:
   <py-script>
-import matplotlib.pyplot as plt
-import numpy as np
-import waves
-
-time = np.linspace(0, 2 * np.pi, 100)
-plt.plot(time, waves.wave(440)(time))
-plt
+from datetime import datetime
+now = datetime.now()
+now.strftime("%m/%d/%Y, %H:%M:%S")
   </py-script>
+  <py-repl auto-generate="true">
+from lxml import etree
+t = etree.parse("small_zlib.pwiz.1.1.mzML")
+print(t.getroot().tag)
+  </py-repl>
 </body>
 </html>
