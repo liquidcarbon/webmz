@@ -25,6 +25,7 @@ now = datetime.now()
 now.strftime("%m/%d/%Y, %H:%M:%S")
   </py-script>
   <py-repl auto-generate="true">
+import altair as alt
 from lxml import etree
 t = etree.parse("small_zlib.pwiz.1.1.mzML")
 print(t.getroot().tag)
