@@ -48,10 +48,94 @@ def unpack_array(bin_array, dtype="float32"):
   unpacked_data = np.frombuffer(byte_data, dtype=dtype)
   return unpacked_data
 
-spectrum_as_dict = {}
-spectrum_as_dict['mz'] = unpack_array(binary_mz)
-spectrum_as_dict['intensity'] = unpack_array(binary_intensity)
+spectrum = np.vstack([
+    unpack_array(binary_mz),
+    unpack_array(binary_intensity)
+]).T[:5000]
+spectrum
+  </py-repl>
+  <py-repl>
+def add_zoom(chart: alt.Chart, x_axis_key="shift"):
+    """Add customized zoom functionality."""
+
+    wheel_zoom_x = alt.selection_interval(
+        bind="scales", encodings=["x"], zoom="wheel!"
+    )
+
+    wheel_zoom_xy = alt.selection_interval(
+        bind="scales",
+        zoom="wheel![event.shiftKey]",
+    )
+
+    return chart.add_selection(wheel_zoom_xy, wheel_zoom_x)
+
+def plot_spectrum(spectrum, width=900, height=300):
+  plot_data = [{"mz": mz, "intensity": intensity} for (mz, intensity) in spectrum]
+  chart = (
+    alt.Chart(data=alt.Data(values=plot_data))
+    .mark_bar()
+    .encode(
+      x="mz:Q",
+      y="intensity:Q"
+    )
+    .properties(width=width, height=height)
+    return add_zoom(chart)
   </py-repl>
 
+
+  <py-script>
+import altair as alt
+import base64
+import numpy as np
+import zlib
+from lxml import etree
+
+file = "small_zlib.pwiz.1.1.mzML"
+t = etree.parse(file)
+root = t.getroot()
+
+binary_mz = root[0][6][0][0][10][0][3].text
+binary_intensity = root[0][6][0][0][10][1][3].text
+
+def unpack_array(bin_array, dtype="float32"):
+  byte_data = base64.b64decode(bin_array)
+  byte_data = zlib.decompress(byte_data)
+  unpacked_data = np.frombuffer(byte_data, dtype=dtype)
+  return unpacked_data
+
+spectrum = np.vstack([
+    unpack_array(binary_mz),
+    unpack_array(binary_intensity)
+]).T[:5000]
+
+def add_zoom(chart: alt.Chart, x_axis_key="shift"):
+    """Add customized zoom functionality."""
+
+    wheel_zoom_x = alt.selection_interval(
+        bind="scales", encodings=["x"], zoom="wheel!"
+    )
+
+    wheel_zoom_xy = alt.selection_interval(
+        bind="scales",
+        zoom="wheel![event.shiftKey]",
+    )
+
+    return chart.add_selection(wheel_zoom_xy, wheel_zoom_x)
+
+def plot_spectrum(spectrum, width=900, height=300):
+  plot_data = [{"mz": mz, "intensity": intensity} for (mz, intensity) in spectrum]
+  chart = (
+    alt.Chart(data=alt.Data(values=plot_data))
+    .mark_bar()
+    .encode(
+      x="mz:Q",
+      y="intensity:Q"
+    )
+    .properties(width=width, height=height)
+  )
+  return add_zoom(chart)
+
+plot_spectrum(spectrum)
+  </py-script>
 </body>
 </html>
