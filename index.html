@@ -41,7 +41,6 @@ binary_intensity = root[0][6][0][0][10][1][3].text
   </py-repl>
 
   <py-repl auto-generate="true">
- 
 def unpack_array(bin_array, dtype="float32"):
   byte_data = base64.b64decode(bin_array)
   byte_data = zlib.decompress(byte_data)
@@ -54,6 +53,7 @@ spectrum = np.vstack([
 ]).T[:5000]
 spectrum
   </py-repl>
+
   <py-repl>
 def add_zoom(chart: alt.Chart, x_axis_key="shift"):
     """Add customized zoom functionality."""
@@ -79,9 +79,9 @@ def plot_spectrum(spectrum, width=900, height=300):
       y="intensity:Q"
     )
     .properties(width=width, height=height)
-    return add_zoom(chart)
+  )
+  return add_zoom(chart)
   </py-repl>
-
 
   <py-script>
 import altair as alt
