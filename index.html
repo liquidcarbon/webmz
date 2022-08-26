@@ -19,16 +19,39 @@
   </py-env>
   Hello world! <br>
   This is the current date and time, as computed by Python:
+  
   <py-script>
 from datetime import datetime
 now = datetime.now()
 now.strftime("%m/%d/%Y, %H:%M:%S")
   </py-script>
+  
   <py-repl auto-generate="true">
 import altair as alt
+import base64
+import numpy as np
+import zlib
 from lxml import etree
+
 t = etree.parse("small_zlib.pwiz.1.1.mzML")
-print(t.getroot().tag)
+root = t.getroot()
+
+binary_mz = root[0][6][0][0][10][0][3].text
+binary_intensity = root[0][6][0][0][10][1][3].text
   </py-repl>
+
+  <py-repl auto-generate="true">
+ 
+def unpack_array(bin_array, dtype="float32"):
+  byte_data = base64.b64decode(bin_array)
+  byte_data = zlib.decompress(byte_data)
+  unpacked_data = np.frombuffer(byte_data, dtype=dtype)
+  return unpacked_data
+
+spectrum_as_dict = {}
+spectrum_as_dict['mz'] = unpack_array(binary_mz)
+spectrum_as_dict['intensity'] = unpack_array(binary_intensity)
+  </py-repl>
+
 </body>
 </html>
